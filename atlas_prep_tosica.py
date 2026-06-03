@@ -31,16 +31,17 @@ if __name__ == "__main__":
     # unique tags only!
     adata_gbm.obs_names_make_unique()
     adata_gbm.var_names_make_unique()
-    # make X dense
-    if type(adata_gbm.X) != np.ndarray:
-        adata_gbm.X = csr_matrix.todense(adata_gbm.X)
-    adata_gbm.X = np.nan_to_num(adata_gbm, nan=0.0)
 
     # dim reduction of adata
     sc.pp.highly_variable_genes(adata_gbm,
                                 n_top_genes=2000,
                                 flavor="seurat_v3_paper",
                                 subset=True)
+
+    # make X dense
+    if type(adata_gbm.X) != np.ndarray:
+        adata_gbm.X = csr_matrix.todense(adata_gbm.X)
+    adata_gbm.X = np.nan_to_num(adata_gbm, nan=0.0)
 
     obs_new_celltags = [f"{t3} | {t1}" for t3, t1 in zip(list(adata_gbm.obs["annotation_level_3"]), list(adata_gbm.obs["annotation_level_1"]))]
     adata_gbm.obs["curated_cell_tag"] = obs_new_celltags
