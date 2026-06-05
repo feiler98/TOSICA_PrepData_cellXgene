@@ -38,11 +38,6 @@ if __name__ == "__main__":
                                 flavor="seurat_v3_paper",
                                 subset=True)
 
-    # make X dense
-    if type(adata_gbm.X) != np.ndarray:
-        adata_gbm.X = csr_matrix.todense(adata_gbm.X)
-    adata_gbm.X = np.nan_to_num(adata_gbm, nan=0.0)
-
     obs_new_celltags = [f"{t3} | {t1}" for t3, t1 in zip(list(adata_gbm.obs["annotation_level_3"]), list(adata_gbm.obs["annotation_level_1"]))]
     adata_gbm.obs["curated_cell_tag"] = obs_new_celltags
 
@@ -51,9 +46,18 @@ if __name__ == "__main__":
     for list_obs_class in dict_keep.values():
         list_keep.extend(list_obs_class)
     adata_gbm_red = adata_gbm.copy()[list_keep, :]
+    # make X dense
+    if type(adata_gbm_red.X) != np.ndarray:
+        adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
+    adata_gbm_red.X = np.nan_to_num(adata_gbm_red, nan=0.0)
     adata_gbm_red.write(out_dir / "gbm_atlas_genes2k_class5k.h5")
 
     # split big adata_gbm into smaller chunks
     list_shuffled_idx = rand_split_adata_obs(list(adata_gbm.obs.index), 100000)
     for i, list_subindex in enumerate(list_shuffled_idx):
-        adata_gbm.copy()[list_subindex, :].write(out_dir / f"slice_{i}__gbm_atlas_genes2k.h5")
+        adata_gbm_red = adata_gbm.copy()[list_subindex, :]
+        # make X dense
+        if type(adata_gbm_red.X) != np.ndarray:
+            adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
+        adata_gbm_red.X = np.nan_to_num(adata_gbm_red, nan=0.0)
+        adata_gbm_red.write(out_dir / f"slice_{i}__gbm_atlas_genes2k.h5")
