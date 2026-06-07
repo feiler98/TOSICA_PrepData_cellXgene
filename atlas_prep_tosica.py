@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     # dim reduction of adata
     sc.pp.highly_variable_genes(adata_gbm,
-                                n_top_genes=2000,
+                                n_top_genes=3000,
                                 flavor="seurat_v3_paper",
                                 subset=True)
 
@@ -48,9 +48,9 @@ if __name__ == "__main__":
     adata_gbm_red = adata_gbm.copy()[list_keep, :]
     # make X dense
     if type(adata_gbm_red.X) != np.ndarray:
-        adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
-    adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X, nan=0.0)
-    adata_gbm_red.write(out_dir / "gbm_atlas_genes2k_class5k.h5")
+        adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X.copy())
+    adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X.copy(), nan=0.0)
+    adata_gbm_red.write(out_dir / "gbm_atlas_genes3k_class5k.h5")
 
     # split big adata_gbm into smaller chunks
     list_shuffled_idx = rand_split_adata_obs(list(adata_gbm.obs.index), 100000)
@@ -58,6 +58,6 @@ if __name__ == "__main__":
         adata_gbm_red = adata_gbm.copy()[list_subindex, :]
         # make X dense
         if type(adata_gbm_red.X) != np.ndarray:
-            adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
-        adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X, nan=0.0)
-        adata_gbm_red.write(out_dir / f"slice_{i}__gbm_atlas_genes2k.h5")
+            adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X.copy())
+        adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X.copy(), nan=0.0)
+        adata_gbm_red.write(out_dir / f"slice_{i}__gbm_atlas_genes3k.h5")
