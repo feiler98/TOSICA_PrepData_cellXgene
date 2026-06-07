@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # make X dense
     if type(adata_gbm_red.X) != np.ndarray:
         adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
-    adata_gbm_red.X = np.nan_to_num(adata_gbm_red, nan=0.0)
+    adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X, nan=0.0)
     adata_gbm_red.write(out_dir / "gbm_atlas_genes2k_class5k.h5")
 
     # split big adata_gbm into smaller chunks
@@ -59,5 +59,5 @@ if __name__ == "__main__":
         # make X dense
         if type(adata_gbm_red.X) != np.ndarray:
             adata_gbm_red.X = csr_matrix.todense(adata_gbm_red.X)
-        adata_gbm_red.X = np.nan_to_num(adata_gbm_red, nan=0.0)
+        adata_gbm_red.X = np.nan_to_num(adata_gbm_red.X, nan=0.0)
         adata_gbm_red.write(out_dir / f"slice_{i}__gbm_atlas_genes2k.h5")
