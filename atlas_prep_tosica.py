@@ -6,7 +6,6 @@ import numpy as np
 from pathlib import Path
 from scipy.sparse import csr_matrix
 import urllib.request
-import random
 # ----------------------------------------------------------------------------------------------------------------------
 
 def rand_split_adata_obs(obs_idx_list: list, chunk_size: int) -> list:
@@ -31,6 +30,8 @@ if __name__ == "__main__":
     # unique tags only!
     adata_gbm.obs_names_make_unique()
     adata_gbm.var_names_make_unique()
+    adata_gbm.var["ensb_id"] = adata_gbm.var.index
+    adata_gbm = uTp.var_idx_ensg_to_symbol(adata_gbm)
 
     # dim reduction of adata
     sc.pp.highly_variable_genes(adata_gbm,
